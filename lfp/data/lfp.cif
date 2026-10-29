@@ -1,0 +1,75 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# LiFePO4 (triphylite, 橄榄石型) — PolyXRD LFP 内置标准结构模型
+# ─────────────────────────────────────────────────────────────────────────────
+# 用途：PolyXRD LFP 的物相判定参考谱与 Rietveld 精修起始模型。
+#
+# 结构来源（公开文献值，非数据库逐字拷贝）：
+#   A. Yamada, S. C. Chung, K. Hinokuma, "Optimized LiFePO4 for Lithium
+#   Battery Cathodes", J. Electrochem. Soc. 148 (2001) A224–A229 —
+#   室温化学计量 LiFePO4 的晶胞与原子分数坐标（空间群 Pnma，No. 62，Z = 4）。
+#   同组数据亦见于 ICSD 采集号 92053 / COD 1001817 系列（数值一致到 1e-4）。
+#
+# 说明：
+#   1) 空间群采用 ITA 标准设置 Pnma（a ≈ 10.33 Å, b ≈ 6.01 Å, c ≈ 4.69 Å）。
+#      部分 PDF 卡片（如 PDF 40-1499）使用等价的 Pmnb 轴置换设置
+#      （a ≈ 6.02, b ≈ 10.35, c ≈ 4.70），两者 d 值与图谱完全等价，
+#      比对峰位时不受影响；本软件一律以 Pnma 设置报告晶胞参数。
+#   2) 等价位置（Wyckoff）：Li 4a (0,0,0)、Fe 4c (x,1/4,z)、P 4c (x,1/4,z)、
+#      O1/O2 4c、O3 8d。原子坐标按 4c/8d 位点对称约束给定。
+#   3) U_iso 取文献典型值（X 射线粉末数据难以独立精修轻原子热振动），
+#      仅影响高角强度，不影响峰位与晶胞；本软件默认不精修原子坐标与 U_iso。
+#   4) 单胞体积 V ≈ 291.0 Å³，理论密度 3.59 g/cm³（Z = 4，M = 157.76 g/mol）。
+# ─────────────────────────────────────────────────────────────────────────────
+
+data_LiFePO4
+
+_chemical_name_common            'Lithium iron phosphate'
+_chemical_name_systematic        'Iron(2+) lithium phosphate'
+_chemical_formula_sum           'Fe Li O4 P'
+_chemical_formula_structural    'LiFePO4'
+_chemical_formula_weight         157.757
+_chemical_mineral_name           Triphylite
+
+_cell_length_a                   10.32900
+_cell_length_b                    6.00650
+_cell_length_c                    4.69080
+_cell_angle_alpha                90.0000
+_cell_angle_beta                 90.0000
+_cell_angle_gamma                90.0000
+_cell_volume                    291.05
+_cell_formula_units_Z             4
+
+_symmetry_space_group_name_H-M   'P n m a'
+_symmetry_Int_Tables_number       62
+_space_group_name_H-M_alt        'P n m a'
+_space_group_IT_number            62
+_space_group_crystal_system       orthorhombic
+_space_group_setting              'standard, b-axis unique'
+
+loop_
+_symmetry_equiv_pos_as_xyz
+  'x, y, z'
+  '1/2-x, -y, 1/2+z'
+  '-x, 1/2+y, -z'
+  '1/2+x, 1/2-y, 1/2-z'
+  '-x, -y, -z'
+  '1/2+x, y, 1/2-z'
+  'x, 1/2-y, z'
+  '1/2-x, 1/2+y, 1/2+z'
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_U_iso_or_equiv
+_atom_site_symmetry_multiplicity
+_atom_site_Wyckoff_symbol
+  Li1  Li  0.00000  0.00000  0.00000  1.000  0.0170  4  a
+  Fe1  Fe  0.28220  0.25000  0.97460  1.000  0.0060  4  c
+  P1   P   0.09500  0.25000  0.41840  1.000  0.0050  4  c
+  O1   O   0.09680  0.25000  0.74260  1.000  0.0080  4  c
+  O2   O   0.45680  0.25000  0.20560  1.000  0.0080  4  c
+  O3   O   0.16540  0.04660  0.28420  1.000  0.0080  8  d

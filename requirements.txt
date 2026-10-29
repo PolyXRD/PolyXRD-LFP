@@ -1,0 +1,8 @@
+# PolyXRD LFP 运行依赖
+# 版本按已验证环境锁定（Python 3.13 / Windows x64）。PySide6 决定 Qt 运行时，
+# numpy/scipy 决定最小二乘与峰形内核——三者升级都会影响精修数值，改动需重跑 tests/。
+numpy==2.5.3
+scipy==1.18.1
+matplotlib==3.11.2
+PySide6==6.11.2
+pytest>=8.0

@@ -1,0 +1,40 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ---- 虚拟环境 ----
+.venv/
+venv/
+env/
+
+# ---- PyInstaller ----
+build/
+dist/
+*.manifest
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# ---- 本工程临时产物 ----
+# 界面/报告证据是**要提交**的（README 与验证文档引用），故不忽略 docs/evidence
+# 冒烟时临时生成的截图与报告写在临时目录，不要落在仓库根
+_*.png
+_*.html
+# 打包日志（build_all.bat / build_exe.bat 的输出）
+build_*.log
+
+# ---- 本地工具状态 ----
+# .workbuddy 存本机 Agent 记忆与运行态，不随仓库分发
+.workbuddy/
