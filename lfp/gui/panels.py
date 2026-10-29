@@ -114,6 +114,7 @@ class StructurePanel(QGroupBox):
         lay.addWidget(self.warn)
 
     def set_structure(self, struct, *, builtin: bool) -> None:
+        self._last = (struct, builtin)      # 语言切换时按当前语言重渲染
         from lfp.core.symmetry import describe_structure
         sym = describe_structure(struct)
         name = struct.formula or struct.mineral or struct.name
@@ -141,6 +142,9 @@ class StructurePanel(QGroupBox):
     def retranslate(self) -> None:
         self.setTitle(tr("panel.structure"))
         self.btn_import.setText(tr("struct.import"))
+        if getattr(self, "_last", None) is not None:
+            _struct, _builtin = self._last
+            self.set_structure(_struct, builtin=_builtin)
         for key in ("struct.formula", "struct.sg", "struct.system", "struct.point",
                     "struct.laue", "struct.bravais", "struct.atoms"):
             self.card.set_label(key, tr(f"row.{key}"))
@@ -170,6 +174,7 @@ class VerdictPanel(QGroupBox):
         lay.addWidget(self.btn_rerun)
 
     def set_result(self, res) -> None:
+        self._res = res                     # 语言切换时按当前语言重渲染
         key = res.summary_key()
         level = {"ident.verdict.pass": "good",
                  "ident.verdict.partial": "warn",
@@ -221,6 +226,8 @@ class VerdictPanel(QGroupBox):
     def retranslate(self) -> None:
         self.setTitle(tr("panel.verdict"))
         self.btn_rerun.setText(tr("ident.rerun"))
+        if getattr(self, "_res", None) is not None:
+            self.set_result(self._res)
         for key in ("ident.verdict", "ident.coverage", "ident.top3",
                     "ident.unexplained", "ident.shift", "ident.resid",
                     "ident.cell"):

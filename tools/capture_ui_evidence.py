@@ -5,6 +5,7 @@
     ui-fit-view.png   精修后的拟合视图（实测/计算/背景/差值 + Bragg 刻度）
     ui-not-lfp.png    非 LiFePO4 拦截弹窗（含未通过判据）
     ui-english.png    英文界面
+    ui-japanese.png   日文界面
     smoke-report.html HTML 报告样本（内嵌拟合图）
 
 为什么要脚本化：界面截图是发布证据，必须**可复现**且与当前代码一致。
@@ -136,6 +137,12 @@ def main() -> int:
     w.retranslateUi()
     _pump(app, 10)
     _shot(w, OUT / "ui-english.png")
+
+    # ---- 6. 日文界面 --------------------------------------------------
+    im.set_language("ja_JP")
+    w.retranslateUi()
+    _pump(app, 10)
+    _shot(w, OUT / "ui-japanese.png")
 
     im.set_language("zh_CN")
     w.close()
