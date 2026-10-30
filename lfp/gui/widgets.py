@@ -39,6 +39,17 @@ NA_COLOR = "#94A3B8"
 #: 值文本超过该长度才提示完整内容（短文本弹 tooltip 反而碍事）
 _TOOLTIP_MIN_CHARS = 18
 
+#: 内嵌卡片（QGroupBox）去边框的样式。
+#: **只用 `border:0` 时 Qt 的 QStyleSheetStyle 不预留标题高度**，分组标题会
+#: 直接压在第一行数据上（「晶胞参数」盖住 `a = …`、「测量条件」盖住「数据文件」）。
+#: 带标题的卡片必须同时给 `margin-top` 并把 `::title` 定位到 margin 区。
+CARD_QSS_FLAT = "QGroupBox{border:0;}"
+CARD_QSS_TITLED = (
+    "QGroupBox{border:0; margin-top:13px;}"
+    "QGroupBox::title{subcontrol-origin:margin;"
+    "subcontrol-position:top left; left:0px; padding:0 2px;}"
+)
+
 
 class ElidedValueLabel(QLabel):
     """右对齐、可中段省略的值标签（完整文本存 tooltip）。"""
@@ -115,6 +126,9 @@ class ResultCard(QGroupBox):
             self._labels[key] = lbl
             self._values[key] = val
         outer.addLayout(grid)
+        # 富余高度留在卡片底部：否则网格行会被拉开，行数少的卡片看起来像
+        # 排版散了架（样品与测量条件比结构模型少几行，最明显）
+        outer.addStretch(1)
 
     # ------------------------------------------------------------------ #
     def set_value(self, key: str, text: str, level: str | None = None) -> None:

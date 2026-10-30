@@ -22,7 +22,7 @@ matplotlib 3.11.2 / PySide6 6.11.2。
 
 ```
 python -m pytest tests/ -o addopts="" -q
-78 passed
+79 passed
 ```
 
 | 文件 | 用例 | 锁定的东西 |
@@ -36,7 +36,7 @@ python -m pytest tests/ -o addopts="" -q
 | `test_identify.py` | 16 | 判定正例 + 负例（外相、平谱、各向异性），真实谱回归 8 条 |
 | `test_refine_api.py` | 6 | 端到端精修：晶胞恢复、Rwp 可达、阶段选择、非 LFP 抛错 |
 | `test_i18n.py` | 12 | 中/英/日三份文案表键集与占位符一一对齐、`tr` 不漏键、语言菜单有文案 |
-| `test_gui_smoke.py` | 5 | 窗口载入内置结构、三语切换完整、双版次（internal 无注册 / registered 注册往返） |
+| `test_gui_smoke.py` | 6 | 窗口载入内置结构、三语切换完整、双版次（internal 无注册 / registered 注册往返）、左栏布局契约 |
 
 设计取向：负例与正例同等重要。判错会让软件拿一个不属于样品的结构去精修，
 因此「不该判过的绝不能判过」优先于「该判过的一定判过」。

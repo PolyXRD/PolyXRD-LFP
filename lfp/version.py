@@ -1,6 +1,6 @@
 """版本与产品标识 —— 家族统一风格。"""
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 APP_NAME = "PolyXRD LFP"
 APP_TAGLINE = "LiFePO4 正极材料 XRD 物相判定与 Rietveld 精修"

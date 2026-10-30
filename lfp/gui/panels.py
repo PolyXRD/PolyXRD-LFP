@@ -23,7 +23,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from lfp.gui.widgets import ResultCard, TextBlock
+from lfp.gui.widgets import (
+    CARD_QSS_FLAT,
+    CARD_QSS_TITLED,
+    ResultCard,
+    TextBlock,
+)
 from lfp.i18n import tr
 
 MUTED = "#64748B"
@@ -53,7 +58,7 @@ class SamplePanel(QGroupBox):
         self.card = ResultCard(["meta.file", "meta.anode", "meta.wavelength",
                                 "meta.range", "meta.step", "meta.points"],
                                self, columns=2)
-        self.card.setStyleSheet("QGroupBox{border:0;}")
+        self.card.setStyleSheet(CARD_QSS_TITLED)
         lay.addWidget(self.card)
 
     def set_metadata(self, meta: dict, file_name: str) -> None:
@@ -106,7 +111,7 @@ class StructurePanel(QGroupBox):
         self.card = ResultCard(["struct.formula", "struct.sg", "struct.system",
                                 "struct.point", "struct.laue", "struct.bravais",
                                 "struct.atoms"], self, columns=1)
-        self.card.setStyleSheet("QGroupBox{border:0;}")
+        self.card.setStyleSheet(CARD_QSS_FLAT)
         lay.addWidget(self.card)
         self.warn = _muted("", self)
         self.warn.setWordWrap(True)
@@ -164,10 +169,10 @@ class VerdictPanel(QGroupBox):
                                 "ident.top3", "ident.unexplained",
                                 "ident.shift", "ident.resid", "ident.cell"],
                                self, columns=1)
-        self.card.setStyleSheet("QGroupBox{border:0;}")
+        self.card.setStyleSheet(CARD_QSS_FLAT)
         lay.addWidget(self.card)
         self.note = TextBlock(self)
-        self.note.setStyleSheet("QGroupBox{border:0;}")
+        self.note.setStyleSheet(CARD_QSS_FLAT)
         lay.addWidget(self.note)
         self.btn_rerun = QPushButton(self)
         self.btn_rerun.clicked.connect(self.rerun_requested.emit)
@@ -401,18 +406,18 @@ class ResultPanel(QWidget):
         self.card_cell = ResultCard(
             ["res.a", "res.b", "res.c", "res.alpha", "res.beta", "res.gamma",
              "res.volume"], self, columns=2)
-        self.card_cell.setStyleSheet("QGroupBox{border:0; background:transparent;}")
+        self.card_cell.setStyleSheet(CARD_QSS_TITLED + "background:transparent;")
         self.card_sym = ResultCard(
             ["res.system", "res.sg", "res.point", "res.laue", "res.bravais"],
             self, columns=1)
-        self.card_sym.setStyleSheet("QGroupBox{border:0; background:transparent;}")
+        self.card_sym.setStyleSheet(CARD_QSS_TITLED + "background:transparent;")
         self.card_micro = ResultCard(
             ["res.size", "res.strain", "res.fwhm", "res.eta"], self, columns=2)
-        self.card_micro.setStyleSheet("QGroupBox{border:0; background:transparent;}")
+        self.card_micro.setStyleSheet(CARD_QSS_TITLED + "background:transparent;")
         self.card_fit = ResultCard(
             ["res.rwp", "res.rp", "res.rexp", "res.chi2", "res.gof", "res.rb",
              "res.verdict"], self, columns=2)
-        self.card_fit.setStyleSheet("QGroupBox{border:0; background:transparent;}")
+        self.card_fit.setStyleSheet(CARD_QSS_TITLED + "background:transparent;")
         for card in (self.card_cell, self.card_sym, self.card_micro, self.card_fit):
             lay.addWidget(card)
         self.note = TextBlock(self)

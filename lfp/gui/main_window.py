@@ -12,9 +12,10 @@
 
 布局
 ----
-左侧谱图区（:class:`SpectrumCanvas`，占全部富余高度）+ 处理工具条；
-右侧竖直堆叠的五个面板（样品 / 结构 / 判定 / 精修 / 结果），放在
-``QScrollArea`` 里以便小屏也能看全。菜单：文件 / 谱图处理 / 视图 / 语言 / 帮助。
+左侧上下分割：谱图区（:class:`SpectrumCanvas`，占全部富余高度）在上，
+「样品与测量条件 + 结构模型」横向并排在下；处理工具条仍横贯顶部。
+右侧竖直堆叠三个面板（判定 / 精修 / 结果），放在 ``QScrollArea`` 里以便
+小屏也能看全。菜单：文件 / 谱图处理 / 视图 / 语言 / 帮助。
 
 线程模型
 --------
@@ -37,10 +38,13 @@ from PySide6.QtGui import QAction, QActionGroup, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
+    QHBoxLayout,
     QLabel,
     QMainWindow,
     QMessageBox,
     QScrollArea,
+    QSizePolicy,
+
     QSplitter,
     QToolBar,
     QVBoxLayout,
@@ -94,8 +98,11 @@ from lfp.version import APP_NAME, __version__
 #: 语言菜单顺序（与 available_languages 的键一致）
 LANG_ORDER = ("zh_CN", "en_US", "ja_JP")
 
-#: 右侧面板最小宽度（两列结果卡片 + 滚动条的实际需要，再窄会挤压数值）
-PANEL_MIN_WIDTH = 500
+#: 右侧面板最小宽度（判定/精修/结果三块的实际需要，再窄会挤压数值）
+PANEL_MIN_WIDTH = 460
+
+#: 谱图下方「样品 + 结构」一行的最小高度（两列卡片全展开所需的尺寸）
+LEFT_ROW_MIN_HEIGHT = 250
 
 #: 默认窗口尺寸 / 最小窗口尺寸（最小尺寸按「画布仍可读 + 面板不裁字」定）
 WINDOW_SIZE = (1420, 920)
@@ -311,30 +318,56 @@ class MainWindow(QMainWindow):
     def _build_central(self) -> None:
         splitter = QSplitter(Qt.Horizontal, self)
 
-        # 左：谱图区
+        # 左：谱图区（上）+ 样品 & 结构（下，横向并排），竖直可拖拽
         left = QWidget(self)
         lv = QVBoxLayout(left)
         lv.setContentsMargins(0, 0, 0, 0)
-        self.canvas = SpectrumCanvas(left)
-        lv.addWidget(self.canvas, 1)
+        lv.setSpacing(0)
+
+        self.left_split = QSplitter(Qt.Vertical, left)
+        self.left_split.setChildrenCollapsible(False)
+        self.canvas = SpectrumCanvas(self.left_split)
+        self.left_split.addWidget(self.canvas)
+
+        # 样品与结构信息与谱图同屏：读数（峰位、晶胞）时不必横向来回瞟
+        bottom = QWidget(self.left_split)
+        bh = QHBoxLayout(bottom)
+        bh.setContentsMargins(8, 6, 8, 6)
+        bh.setSpacing(8)
+        self.panel_sample = SamplePanel(bottom)
+        self.panel_structure = StructurePanel(bottom)
+        self.panel_structure.import_requested.connect(self._on_import_cif)
+        # 竖直方向不拉伸：两块面板行数不同，拉满整行会在行数少的那块里留下
+        # 一大片空白（卡片底边空着不好看），故各自保持自然高度、顶部对齐。
+        for _p in (self.panel_sample, self.panel_structure):
+            _p.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        bh.addWidget(self.panel_sample, 1, Qt.AlignTop)
+        bh.addWidget(self.panel_structure, 1, Qt.AlignTop)
+        row_h = max(self.panel_sample.sizeHint().height(),
+                    self.panel_structure.sizeHint().height(),
+                    LEFT_ROW_MIN_HEIGHT)
+        # 只钉下限、不写死 setSizes：setSizes 用的是窗口尺寸而非中央区尺寸
+        # （还要扣掉工具条与状态栏），按窗口高算会把这一行压短几十像素，
+        # 表现为卡片底部那行被切掉。下限 = 内容自然高度，用户仍可向上拖大。
+        bottom.setMinimumHeight(row_h)
+        self.left_split.addWidget(bottom)
+        self.left_split.setStretchFactor(0, 1)
+        self.left_split.setStretchFactor(1, 0)
+        lv.addWidget(self.left_split, 1)
         splitter.addWidget(left)
 
-        # 右：面板栈（可滚动）
+        # 右：判定 / 精修 / 结果（可滚动）
         right = QWidget(self)
         rv = QVBoxLayout(right)
         rv.setContentsMargins(8, 8, 8, 8)
         rv.setSpacing(8)
-        self.panel_sample = SamplePanel(right)
-        self.panel_structure = StructurePanel(right)
-        self.panel_structure.import_requested.connect(self._on_import_cif)
         self.panel_verdict = VerdictPanel(right)
         self.panel_verdict.rerun_requested.connect(self._on_rerun_identify)
         self.panel_refine = RefinePanel(right)
         self.panel_refine.run_requested.connect(self._on_run_refine)
         self.panel_refine.cancel_requested.connect(self._on_cancel_refine)
         self.panel_result = ResultPanel(right)
-        for w in (self.panel_sample, self.panel_structure, self.panel_verdict,
-                  self.panel_refine, self.panel_result):
+        for w in (self.panel_verdict, self.panel_refine, self.panel_result):
             rv.addWidget(w)
         rv.addStretch(1)
 
@@ -349,7 +382,7 @@ class MainWindow(QMainWindow):
 
         splitter.setStretchFactor(0, 1)
         splitter.setStretchFactor(1, 0)
-        splitter.setSizes([820, PANEL_MIN_WIDTH])
+        splitter.setSizes([WINDOW_SIZE[0] - PANEL_MIN_WIDTH, PANEL_MIN_WIDTH])
         self.setCentralWidget(splitter)
         self.splitter = splitter
         self.right_scroll = scroll

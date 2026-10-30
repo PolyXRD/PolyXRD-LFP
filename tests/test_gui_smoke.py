@@ -131,3 +131,27 @@ def test_registration_code_roundtrip():
     # 小写/去连字符/无前缀都应能校验
     assert registration.verify_code(code.replace("-", "").lower()) == unit
     assert registration.verify_code("PXRD1-AAAA") is None
+
+
+# --------------------------------------------------------------------------- #
+# 布局：样品/结构在谱图下方（左栏），右栏只留判定/精修/结果
+# --------------------------------------------------------------------------- #
+def test_left_column_holds_sample_and_structure(registered):
+    """1.1.0 起的布局契约：左栏是竖直分割（谱图 + 样品/结构一行），
+
+    右栏（滚动区）只装判定 / 精修 / 结果，避免右侧横向拥挤。
+    """
+    w = _window()
+    # 左栏两块面板的父级是「样品 + 结构」那一行的容器
+    row = w.panel_sample.parentWidget()
+    assert w.panel_structure.parentWidget() is row
+    # 该行容器本身挂在左栏竖直分割器的第 2 格（第 1 格是谱图）
+    assert w.left_split.indexOf(row) == 1
+    assert w.left_split.widget(0) is w.canvas
+    # 右栏滚动区里不应再出现样品/结构面板
+    right = w.right_scroll.widget()
+    assert w.panel_sample.parentWidget() is not right
+    assert w.panel_structure.parentWidget() is not right
+    for panel in (w.panel_verdict, w.panel_refine, w.panel_result):
+        assert right.isAncestorOf(panel)
+    w.close()

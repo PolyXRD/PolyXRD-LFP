@@ -78,8 +78,18 @@ def main() -> int:
     st = parse_cif(BASE / "lfp/data/lfp.cif")
 
     # ---- 1. 谱图视图（判定通过） -------------------------------------
-    w._pattern_raw = make_pattern(st)
-    w._pattern = w._pattern_raw
+    pat = make_pattern(st)
+    w._pattern_raw = pat
+    w._pattern = pat
+    # 样品与测量条件面板：合成谱没有文件头，这里按真实仪器条件填一份，
+    # 否则截图里全是「—」，看不出这块面板的实际样子
+    tt = pat.two_theta
+    pat.meta.update({"anode": "Cu Kα", "wavelength": 1.54056,
+                     "step_hint": float(tt[1] - tt[0]),
+                     "points": int(tt.size),
+                     "range": (float(tt[0]), float(tt[-1]))})
+    w._file_name = "1-1.txt"
+    w.panel_sample.set_metadata(pat.meta, w._file_name)
     w._identify()
     _pump(app)
     _shot(w, OUT / "ui-spectrum.png")
