@@ -50,6 +50,7 @@ if not exist "dist\PolyXRD-LFP-%VER%-Setup.exe" (
     exit /b 1
 )
 
+call tidy_dist.bat
 echo.
 echo Done:
 echo   dist\PolyXRD-LFP-%VER%-Setup.exe

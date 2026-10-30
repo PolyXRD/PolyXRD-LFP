@@ -4,7 +4,10 @@ REM Requires numpy / scipy / matplotlib / PySide6 / PyInstaller.
 REM
 REM Output:
 REM   dist\PolyXRD-LFP-vX.Y.Z.exe   registered edition (with registration module)
-REM   dist\PolyXRD-LFP.exe          fixed-name copy (GitHub release asset name)
+REM
+REM That exe is an INTERMEDIATE payload: build_setup.bat wraps it into the
+REM installer, then tidy_dist.bat deletes it. dist\ must end up holding exactly
+REM two files - the internal evaluation exe and the Setup installer.
 REM
 REM Internal evaluation build: use build_internal.bat instead.
 REM
@@ -43,9 +46,7 @@ if not exist "dist\PolyXRD-LFP-v%VER%.exe" (
     exit /b 1
 )
 
-copy /Y "dist\PolyXRD-LFP-v%VER%.exe" "dist\PolyXRD-LFP.exe" >nul
 echo.
-echo Done ^(registered^):
-echo   dist\PolyXRD-LFP-v%VER%.exe
-echo   dist\PolyXRD-LFP.exe
+echo Done ^(registered payload^):
+echo   dist\PolyXRD-LFP-v%VER%.exe  ^(consumed by build_setup.bat^)
 endlocal
